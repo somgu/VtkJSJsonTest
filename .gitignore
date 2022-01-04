@@ -11,6 +11,7 @@ node_modules/
 # production
 build/
 dist/
+public/3Dscene
 
 # misc
 .DS_Store

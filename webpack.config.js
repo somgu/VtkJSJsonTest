@@ -11,8 +11,8 @@ const OUTPUT_DIR = path.resolve(__dirname, "dist");
 
 const assets = [
   {
-    from: path.resolve(__dirname, "public/json"),
-    to: path.resolve(OUTPUT_DIR, "json"),
+    from: path.resolve(__dirname, "public/3Dscene"),
+    to: path.resolve(OUTPUT_DIR, "3Dscene"),
   },
 ];
 

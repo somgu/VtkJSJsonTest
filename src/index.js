@@ -2,6 +2,7 @@ import "@kitware/vtk.js/Rendering/Profiles/All";
 
 import vtkFullScreenRenderWindow from "@kitware/vtk.js/Rendering/Misc/FullScreenRenderWindow";
 
+import vtk from "@kitware/vtk.js/vtk";
 import vtkActor from "@kitware/vtk.js/Rendering/Core/Actor";
 import vtkMapper from "@kitware/vtk.js/Rendering/Core/Mapper";
 import vtkCalculator from "@kitware/vtk.js/Filters/General/Calculator";
@@ -13,14 +14,7 @@ import "@kitware/vtk.js/IO/Core/DataAccessHelper/HttpDataAccessHelper";
 import { AttributeTypes } from "@kitware/vtk.js/Common/DataModel/DataSetAttributes/Constants";
 import { FieldDataTypes } from "@kitware/vtk.js/Common/DataModel/DataSet/Constants";
 
-const sceneJSON = require('../3Dscene/index.json');
-const firstJSON = require('../3Dscene/1/index.json');
-const secondJSON = require('../3Dscene/2/index.json');
-const thirdJSON = require('../3Dscene/3/index.json');
-
-console.log(sceneJSON);
-console.log(firstJSON);
-
+const API_URL = __API_URL__;
 // ----------------------------------------------------------------------------
 // Read JSON File
 //
@@ -52,16 +46,8 @@ const fullScreenRenderer = vtkFullScreenRenderWindow.newInstance();
 const renderer = fullScreenRenderer.getRenderer();
 const renderWindow = fullScreenRenderer.getRenderWindow();
 
-// const loader = vtkHttpSceneLoader.newInstance({
-//   renderer,
-//   fetchGzip: true,
-// });
-// loader.setUrl('../3Dscene');
-// loader.onReady(() => {
-//   renderWindow.render();
-// });
-const reader = vtkHttpDataSetReader.newInstance();
-reader.setUrl(`../3Dscene`).then(() => {
+const reader = vtkHttpDataSetReader.newInstance({ fetchpGzip: true });
+reader.setUrl(`${API_URL}/3Dscene/1`).then(() => {
   reader.loadData().then(() => {
     renderer.resetCamera();
     renderWindow.render();
@@ -70,64 +56,25 @@ reader.setUrl(`../3Dscene`).then(() => {
 // ----------------------------------------------------------------------------
 // Load JSON File as Actor code
 // ----------------------------------------------------------------------------
-const source = vtk(firstJSON);
 
-const reader = vtkHttpDataSetReader.newInstance({ fetchGzip: true });
-const coneSource = vtkConeSource.newInstance({ height: 1.0 });
-const filter = vtkCalculator.newInstance();
+// source
+const source = reader.getOutputPort();
 
-filter.setInputConnection(coneSource.getOutputPort());
-filter.setFormula({
-  getArrays: (inputDataSets) => ({
-    input: [],
-    output: [
-      {
-        location: FieldDataTypes.CELL,
-        name: "Random",
-        dataType: "Float32Array",
-        attribute: AttributeTypes.SCALARS,
-      },
-    ],
-  }),
-  evaluate: (arraysIn, arraysOut) => {
-    const [scalars] = arraysOut.map((d) => d.getData());
-    for (let i = 0; i < scalars.length; i++) {
-      scalars[i] = Math.random();
-    }
-  },
-});
-
+// mapper
 const mapper = vtkMapper.newInstance();
-mapper.setInputConnection(filter.getOutputPort());
+mapper.setInputData(source);
 
 // actor
 const actor = vtkActor.newInstance();
 actor.setMapper(mapper);
 renderer.addActor(actor);
 
-fullScreenRenderer.addController(controlPanel);
-const representationSelector = document.querySelector(".representations");
-const resolutionChange = document.querySelector(".resolution");
-
-representationSelector.addEventListener("change", (e) => {
-  const newRepValue = Number(e.target.value);
-  actor.getProperty().setRepresentation(newRepValue);
-  renderWindow.render();
-});
-
-resolutionChange.addEventListener("input", (e) => {
-  const resolution = Number(e.target.value);
-  coneSource.setResolution(resolution);
-  renderWindow.render();
-});
-
-const API_URL = __API_URL__;
-fetch(`${API_URL}/json/test.json`)
-  .then((response) => {
-    console.log(response.status);
-    return response.json();
-  })
-  .then((json) => {
-    console.log("json", json, json.name);
-  })
-  .catch((err) => console.error(err));
+// fetch(`${API_URL}/3scene`)
+//   .then((response) => {
+//     console.log(response.status);
+//     return response.json();
+//   })
+//   .then((json) => {
+//     console.log("json", json, json.name);
+//   })
+//   .catch((err) => console.error(err));
