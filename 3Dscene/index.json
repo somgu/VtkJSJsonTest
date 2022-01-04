@@ -1,0 +1,83 @@
+{
+  "version": 1.0,
+  "background": [0, 0, 0],
+  "camera": {
+    "focalPoint": [0, 0, 0],
+    "position": [0, 0, 1],
+    "viewUp": [0, 1, 0]
+  },
+  "centerOfRotation": [0, 0, 0],
+  "scene": [
+    {
+      "name": "1",
+      "type": "httpDataSetReader",
+      "httpDataSetReader": { "url": "1" },
+      "actor": {
+        "origin": [0, 0, 0],
+        "scale": [1, 1, 1],
+        "position": [0, 0, 0]
+      },
+      "actorRotation": [0, 0, 0, 1],
+      "mapper": {
+        "colorByArrayName": "",
+        "colorMode": 0,
+        "scalarMode": 0
+      },
+      "property": {
+        "representation": 2,
+        "edgeVisibility": 0,
+        "diffuseColor": [1, 0.9, 0.9],
+        "pointSize": 1,
+        "opacity": 0.3
+      }
+    },
+    {
+      "name": "2",
+      "type": "httpDataSetReader",
+      "httpDataSetReader": { "url": "2" },
+      "actor": {
+        "origin": [0, 0, 0],
+        "scale": [1, 1, 1],
+        "position": [0, 0, 0]
+      },
+      "actorRotation": [0, 0, 0, 1],
+      "mapper": {
+        "colorByArrayName": "",
+        "colorMode": 0,
+        "scalarMode": 0
+      },
+      "property": {
+        "representation": 2,
+        "edgeVisibility": 0,
+        "diffuseColor": [1, 0, 0],
+        "pointSize": 1,
+        "opacity": 0.9
+      }
+    },
+    {
+      "name": "3",
+      "type": "httpDataSetReader",
+      "httpDataSetReader": { "url": "3" },
+      "actor": {
+        "origin": [0, 0, 0],
+        "scale": [1, 1, 1],
+        "position": [0, 0, 0]
+      },
+      "actorRotation": [0, 0, 0, 1],
+      "mapper": {
+        "colorByArrayName": "",
+        "colorMode": 0,
+        "scalarMode": 0
+      },
+      "property": {
+        "representation": 2,
+        "edgeVisibility": 0,
+        "diffuseColor": [0, 1, 0],
+        "pointSize": 1,
+        "opacity": 0.9
+      }
+    }
+  ],
+  "lookupTables": {
+  }
+}

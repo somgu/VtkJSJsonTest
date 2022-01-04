@@ -1,0 +1,62 @@
+{
+  "vtkClass": "vtkPolyData",
+  "points": {
+      "vtkClass": "vtkPoints",
+      "name": "points",
+      "numberOfComponents": 3,
+      "dataType": "Float32Array",
+      "ref": {
+         "encode": "LittleEndian",
+         "basepath": "data",
+         "id": "Float32_1631997-326862276d2336d2e388e5e2ea361f6c"
+      },
+      "size": 1631997
+    },
+  "polys": {
+      "vtkClass": "vtkCellArray",
+      "name": "polys",
+      "numberOfComponents": 1,
+      "dataType": "Int32Array",
+      "ref": {
+         "encode": "LittleEndian",
+         "basepath": "data",
+         "id": "Int32_3523324-85a0f4430a664b09aaf106558e545635"
+      },
+      "size": 3523324
+    },
+  "pointData": {
+    "vtkClass": "vtkDataSetAttributes",
+    "arrays": [
+      { "data": {
+      "vtkClass": "vtkDataArray",
+      "name": "NIFTI",
+      "numberOfComponents": 1,
+      "dataType": "Float32Array",
+      "ref": {
+         "encode": "LittleEndian",
+         "basepath": "data",
+         "id": "Float32_543999-cc7926e4ef6a93c783aa1730b2a96a50"
+      },
+      "size": 543999
+    }},
+      { "data": {
+      "vtkClass": "vtkDataArray",
+      "name": "Normals",
+      "numberOfComponents": 3,
+      "dataType": "Float32Array",
+      "ref": {
+         "encode": "LittleEndian",
+         "basepath": "data",
+         "id": "Float32_1631997-29da3c765555f17e18b779114fdf2751"
+      },
+      "size": 1631997
+    }}
+    ],
+    "activeTCoords": -1,
+    "activeScalars": 0,
+    "activeNormals": 1,
+    "activeGlobalIds": -1,
+    "activeTensors": -1,
+    "activePedigreeIds": -1,
+    "activeVectors": -1
+  }}

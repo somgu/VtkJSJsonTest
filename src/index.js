@@ -1,26 +1,17 @@
-// Load the rendering pieces we want to use (for both WebGL and WebGPU)
-import '@kitware/vtk.js/Rendering/Profiles/All';
+import "@kitware/vtk.js/Rendering/Profiles/All";
 
-import vtkFullScreenRenderWindow from '@kitware/vtk.js/Rendering/Misc/FullScreenRenderWindow';
+import vtkFullScreenRenderWindow from "@kitware/vtk.js/Rendering/Misc/FullScreenRenderWindow";
 
-import vtk                  from '@kitware/vtk.js/vtk';
-import vtkActor         from '@kitware/vtk.js/Rendering/Core/Actor';
-import vtkMapper            from '@kitware/vtk.js/Rendering/Core/Mapper';
-import vtkVolume from '@kitware/vtk.js/Rendering/Core/Volume';
-import vtkVolumeMapper from '@kitware/vtk.js/Rendering/Core/VolumeMapper';
-import vtkPiecewiseFunction from '@kitware/vtk.js/Common/DataModel/PiecewiseFunction';
-import vtkColorTransferFunction from '@kitware/vtk.js/Rendering/Core/ColorTransferFunction';
-import vtkCamera from '@kitware/vtk.js/Rendering/Core/Camera';
-import vtkInteractorStyleManipulator from '@kitware/vtk.js/Interaction/Style/InteractorStyleManipulator';
-import vtkMouseCameraTrackballRotateManipulator from '@kitware/vtk.js/Interaction/Manipulators/MouseCameraTrackballRotateManipulator';
-import vtkRenderWindowInteractor from '@kitware/vtk.js/Rendering/Core/RenderWindowInteractor';
-import vtkHttpDataSetReader from '@kitware/vtk.js/IO/Core/HttpDataSetReader';
-import vtkHttpSceneLoader from '@kitware/vtk.js/IO/Core/HttpSceneLoader';
+import vtkActor from "@kitware/vtk.js/Rendering/Core/Actor";
+import vtkMapper from "@kitware/vtk.js/Rendering/Core/Mapper";
+import vtkCalculator from "@kitware/vtk.js/Filters/General/Calculator";
+import vtkConeSource from "@kitware/vtk.js/Filters/Sources/ConeSource";
+import vtkJSONReader from "@kitware/vtk.js/IO/Misc/JSONReader";
+import vtkHttpDataSetReader from "@kitware/vtk.js/IO/Core/HttpDataSetReader";
+import "@kitware/vtk.js/IO/Core/DataAccessHelper/HttpDataAccessHelper";
 
-// Force DataAccessHelper to have access to various data source
-import '@kitware/vtk.js/IO/Core/DataAccessHelper/HtmlDataAccessHelper';
-import '@kitware/vtk.js/IO/Core/DataAccessHelper/JSZipDataAccessHelper';
-import '@kitware/vtk.js/IO/Core/DataAccessHelper/LiteHttpDataAccessHelper';
+import { AttributeTypes } from "@kitware/vtk.js/Common/DataModel/DataSetAttributes/Constants";
+import { FieldDataTypes } from "@kitware/vtk.js/Common/DataModel/DataSet/Constants";
 
 const sceneJSON = require('../3Dscene/index.json');
 const firstJSON = require('../3Dscene/1/index.json');
@@ -81,32 +72,62 @@ reader.setUrl(`../3Dscene`).then(() => {
 // ----------------------------------------------------------------------------
 const source = vtk(firstJSON);
 
-// mapper
-const mapper = vtkMapper.newInstance({ interpolateScalarsBeforeMapping: true });
-mapper.setInputData(source);
+const reader = vtkHttpDataSetReader.newInstance({ fetchGzip: true });
+const coneSource = vtkConeSource.newInstance({ height: 1.0 });
+const filter = vtkCalculator.newInstance();
+
+filter.setInputConnection(coneSource.getOutputPort());
+filter.setFormula({
+  getArrays: (inputDataSets) => ({
+    input: [],
+    output: [
+      {
+        location: FieldDataTypes.CELL,
+        name: "Random",
+        dataType: "Float32Array",
+        attribute: AttributeTypes.SCALARS,
+      },
+    ],
+  }),
+  evaluate: (arraysIn, arraysOut) => {
+    const [scalars] = arraysOut.map((d) => d.getData());
+    for (let i = 0; i < scalars.length; i++) {
+      scalars[i] = Math.random();
+    }
+  },
+});
+
+const mapper = vtkMapper.newInstance();
+mapper.setInputConnection(filter.getOutputPort());
 
 // actor
 const actor = vtkActor.newInstance();
 actor.setMapper(mapper);
 renderer.addActor(actor);
 
-// camera
-const camera = vtkCamera.newInstance();
-renderer.setActiveCamera(camera);
-camera.setFocalPoint(sceneJSON.camera.focalPoint);
-camera.setPosition(sceneJSON.camera.position);
-camera.setViewUp(sceneJSON.camera.viewUp);
-renderer.resetCameraClippingRange();
+fullScreenRenderer.addController(controlPanel);
+const representationSelector = document.querySelector(".representations");
+const resolutionChange = document.querySelector(".resolution");
 
-// interaction
-const interactor = vtkRenderWindowInteractor.newInstance();
-const manipulator = vtkInteractorStyleManipulator.newInstance();
-renderWindow.setInteractor(interactor);
-interactor.setInteractorStyle(manipulator);
-interactor.initialize();
-const rotateManipulator = vtkMouseCameraTrackballRotateManipulator.newInstance();
-rotateManipulator.setButton(1);
-manipulator.addMouseManipulator(rotateManipulator);
-manipulator.setCenterOfRotation(sceneJSON.centerOfRotation);
+representationSelector.addEventListener("change", (e) => {
+  const newRepValue = Number(e.target.value);
+  actor.getProperty().setRepresentation(newRepValue);
+  renderWindow.render();
+});
 
-renderWindow.render();
+resolutionChange.addEventListener("input", (e) => {
+  const resolution = Number(e.target.value);
+  coneSource.setResolution(resolution);
+  renderWindow.render();
+});
+
+const API_URL = __API_URL__;
+fetch(`${API_URL}/json/test.json`)
+  .then((response) => {
+    console.log(response.status);
+    return response.json();
+  })
+  .then((json) => {
+    console.log("json", json, json.name);
+  })
+  .catch((err) => console.error(err));
