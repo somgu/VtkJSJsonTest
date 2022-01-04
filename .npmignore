@@ -1,0 +1,4 @@
+.npmrc
+.cache/
+.git/
+node_modules/

@@ -1,0 +1,7 @@
+!.eslintrc.js
+documentation/
+build/
+dist/
+
+yarn.lock
+package-lock.json
