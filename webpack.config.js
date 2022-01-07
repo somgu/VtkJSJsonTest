@@ -52,7 +52,7 @@ module.exports = {
         test: /\.(png|jpg|gif)$/,
         loader: "file-loader",
         options: {
-          name: "assets/images/[contenthash].[ext]",
+          name: "assets/data/[contenthash].[ext]",
         },
       },
     ],
@@ -67,7 +67,7 @@ module.exports = {
       patterns: [...assets],
     }),
     new HtmlWebpackPlugin({
-      title: "VtkJS JSON Test",
+      title: "JSON Loader Sample",
       inject: "body",
       template: path.resolve(__dirname, "public/index.html"),
       meta: {
